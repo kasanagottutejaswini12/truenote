@@ -49,6 +49,7 @@ const defaultBouquet: BouquetData = {
   wrapColor: '#f5e6d0',
   ribbonStyle: 'bow',
   ribbonColor: '#d4829a',
+  arrangementStyle: 'round',
   messageCard: {
     message: 'You are loved 💕',
     fontStyle: 'Playfair Display',
