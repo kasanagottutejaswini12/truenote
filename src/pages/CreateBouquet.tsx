@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useBouquet, FlowerType, FlowerItem } from '@/context/BouquetContext';
+import { useBouquet, FlowerType, FlowerItem, WrapStyle } from '@/context/BouquetContext';
 import FlowerSVG from '@/components/FlowerSVG';
 import BouquetPreview from '@/components/BouquetPreview';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Plus, X, Palette } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X, Palette } from 'lucide-react';
 
 const flowerTypes: { type: FlowerType; label: string }[] = [
   { type: 'rose', label: 'Rose' },
@@ -14,16 +14,26 @@ const flowerTypes: { type: FlowerType; label: string }[] = [
   { type: 'lily', label: 'Lily' },
   { type: 'sunflower', label: 'Sunflower' },
   { type: 'daisy', label: 'Daisy' },
+  { type: 'peony', label: 'Peony' },
 ];
 
 const flowerColors = [
-  '#e8a0b4', '#d4829a', '#f0c4d4', '#c75b7a',
+  '#d4627a', '#e8a0b4', '#f0c4d4', '#c75b7a',
   '#f5e6d0', '#ffffff', '#ffd700', '#ff6b6b',
   '#b088d4', '#87ceeb', '#ffb347', '#98d4a6',
 ];
 
-const wrapColors = ['#f5e6d0', '#e8d5c4', '#d4c4b0', '#c9b8a8', '#f0e0f0', '#d0e8d0', '#fff5f5', '#f0f0ff'];
-const ribbonColors = ['#d4829a', '#e8a0b4', '#c75b7a', '#b088d4', '#ffd700', '#87ceeb', '#ff6b6b', '#98d4a6'];
+const wrapStyles: { id: WrapStyle; label: string; color: string }[] = [
+  { id: 'kraft', label: 'Kraft Paper', color: '#c9a87c' },
+  { id: 'pastel-matte', label: 'Pastel Matte', color: '#f0d4e0' },
+  { id: 'transparent-floral', label: 'Transparent', color: '#e8f0e8' },
+  { id: 'korean-layered', label: 'Korean Style', color: '#f5e6d0' },
+  { id: 'satin-ribbon', label: 'Satin', color: '#e0d0e8' },
+  { id: 'minimal-luxury', label: 'Minimal', color: '#f0f0f0' },
+];
+
+const wrapColors = ['#f5e6d0', '#e8d5c4', '#c9a87c', '#d4c4b0', '#f0d4e0', '#e0d0e8', '#e8f0e8', '#f0f0f0', '#fff5f5', '#f0f0ff'];
+const ribbonColors = ['#d4829a', '#e8a0b4', '#c75b7a', '#b088d4', '#ffd700', '#87ceeb', '#ff6b6b', '#98d4a6', '#f5e6d0', '#8b6914'];
 
 const CreateBouquetPage: React.FC = () => {
   const navigate = useNavigate();
@@ -143,17 +153,37 @@ const CreateBouquetPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Wrap style */}
+            <div>
+              <p className="text-sm font-body font-semibold text-foreground mb-2">Wrapping Style</p>
+              <div className="flex flex-wrap gap-2">
+                {wrapStyles.map(ws => (
+                  <button
+                    key={ws.id}
+                    onClick={() => setBouquet(prev => ({ ...prev, wrapStyle: ws.id, wrapColor: ws.color }))}
+                    className={`px-3 py-1.5 rounded-full text-xs font-body capitalize transition-all ${
+                      bouquet.wrapStyle === ws.id
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'bg-muted text-foreground hover:bg-muted/80'
+                    }`}
+                  >
+                    {ws.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Wrap color */}
             <div>
               <p className="text-sm font-body font-semibold text-foreground mb-2 flex items-center gap-1">
-                <Palette className="w-4 h-4" /> Wrapping Color
+                <Palette className="w-4 h-4" /> Wrap Color
               </p>
               <div className="flex flex-wrap gap-2">
                 {wrapColors.map(c => (
                   <button
                     key={c}
                     onClick={() => setBouquet(prev => ({ ...prev, wrapColor: c }))}
-                    className={`w-8 h-8 rounded-full border-2 transition-transform ${bouquet.wrapColor === c ? 'border-primary scale-110' : 'border-border'}`}
+                    className={`w-8 h-8 rounded-full border-2 transition-all ${bouquet.wrapColor === c ? 'border-primary scale-110 shadow-md' : 'border-border'}`}
                     style={{ backgroundColor: c }}
                   />
                 ))}
@@ -164,7 +194,7 @@ const CreateBouquetPage: React.FC = () => {
             <div>
               <p className="text-sm font-body font-semibold text-foreground mb-2">Ribbon</p>
               <div className="flex gap-2 mb-2">
-                {(['bow', 'simple', 'none'] as const).map(style => (
+                {(['bow', 'simple', 'lace', 'none'] as const).map(style => (
                   <button
                     key={style}
                     onClick={() => setBouquet(prev => ({ ...prev, ribbonStyle: style }))}
@@ -182,7 +212,7 @@ const CreateBouquetPage: React.FC = () => {
                     <button
                       key={c}
                       onClick={() => setBouquet(prev => ({ ...prev, ribbonColor: c }))}
-                      className={`w-7 h-7 rounded-full border-2 transition-transform ${bouquet.ribbonColor === c ? 'border-primary scale-110' : 'border-border'}`}
+                      className={`w-7 h-7 rounded-full border-2 transition-all ${bouquet.ribbonColor === c ? 'border-primary scale-110 shadow-md' : 'border-border'}`}
                       style={{ backgroundColor: c }}
                     />
                   ))}

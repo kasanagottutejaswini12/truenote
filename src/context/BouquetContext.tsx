@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type FlowerType = 'rose' | 'tulip' | 'lily' | 'sunflower' | 'daisy';
+export type FlowerType = 'rose' | 'tulip' | 'lily' | 'sunflower' | 'daisy' | 'peony';
 export type FlowerColor = string;
-export type WrapStyle = 'classic' | 'kraft' | 'silk' | 'modern';
+export type WrapStyle = 'kraft' | 'pastel-matte' | 'transparent-floral' | 'korean-layered' | 'satin-ribbon' | 'minimal-luxury';
 export type RibbonStyle = 'bow' | 'simple' | 'lace' | 'none';
 
 export interface FlowerMemory {
@@ -36,13 +36,13 @@ export interface BouquetData {
 
 const defaultBouquet: BouquetData = {
   flowers: [
-    { id: '1', type: 'rose', color: '#e8a0b4' },
-    { id: '2', type: 'tulip', color: '#f0c4d4' },
-    { id: '3', type: 'rose', color: '#d4829a' },
+    { id: '1', type: 'rose', color: '#d4627a' },
+    { id: '2', type: 'peony', color: '#f0a0b8' },
+    { id: '3', type: 'rose', color: '#c75b7a' },
     { id: '4', type: 'lily', color: '#f5e6d0' },
     { id: '5', type: 'daisy', color: '#ffffff' },
   ],
-  wrapStyle: 'classic',
+  wrapStyle: 'korean-layered',
   wrapColor: '#f5e6d0',
   ribbonStyle: 'bow',
   ribbonColor: '#d4829a',
