@@ -31,6 +31,17 @@ const ViewBouquetPage: React.FC = () => {
     }
   }, [searchParams]);
 
+  const theme = bouquet ? (cardThemes[bouquet.messageCard.cardTheme] || cardThemes.rose) : cardThemes.rose;
+
+  const petals = useMemo(() =>
+    [...Array(15)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 3,
+      duration: 4 + Math.random() * 3,
+      size: 8 + Math.random() * 12,
+    })), []);
+
   if (!bouquet) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -43,18 +54,6 @@ const ViewBouquetPage: React.FC = () => {
       </div>
     );
   }
-
-  const theme = cardThemes[bouquet.messageCard.cardTheme] || cardThemes.rose;
-
-  // Falling petals
-  const petals = useMemo(() =>
-    [...Array(15)].map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      delay: Math.random() * 3,
-      duration: 4 + Math.random() * 3,
-      size: 8 + Math.random() * 12,
-    })), []);
 
   const getFlowerPosition = (index: number, total: number) => {
     const centerX = 160;
