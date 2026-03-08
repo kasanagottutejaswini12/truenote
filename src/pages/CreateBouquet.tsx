@@ -163,7 +163,30 @@ const CreateBouquetPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Wrap style */}
+            {/* Arrangement style */}
+            <div>
+              <p className="text-sm font-body font-semibold text-foreground mb-2 flex items-center gap-1">
+                <Flower2 className="w-4 h-4" /> Arrangement Style
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {arrangementStyles.map(as => (
+                  <button
+                    key={as.id}
+                    onClick={() => setBouquet(prev => ({ ...prev, arrangementStyle: as.id }))}
+                    className={`px-3 py-1.5 rounded-full text-xs font-body transition-all ${
+                      bouquet.arrangementStyle === as.id
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'bg-muted text-foreground hover:bg-muted/80'
+                    }`}
+                    title={as.desc}
+                  >
+                    {as.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+
             <div>
               <p className="text-sm font-body font-semibold text-foreground mb-2">Wrapping Style</p>
               <div className="flex flex-wrap gap-2">
