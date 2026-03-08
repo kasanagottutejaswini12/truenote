@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useBouquet, FlowerType, FlowerItem, WrapStyle } from '@/context/BouquetContext';
+import { useBouquet, FlowerType, FlowerItem, WrapStyle, ArrangementStyle } from '@/context/BouquetContext';
 import FlowerSVG from '@/components/FlowerSVG';
 import BouquetPreview from '@/components/BouquetPreview';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, X, Palette, Music } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X, Palette, Music, Flower2 } from 'lucide-react';
 
 const flowerTypes: { type: FlowerType; label: string; defaultColor: string }[] = [
   { type: 'rose', label: 'Rose', defaultColor: '#d4627a' },
