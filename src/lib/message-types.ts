@@ -139,6 +139,7 @@ export const defaultMessage: MessageData = {
   scheduledAt: '',
   countdownEnabled: false,
   enableMusic: false,
+  isOneTime: false,
 };
 
 export const generateSlug = () => {

@@ -25,6 +25,7 @@ const App = () => (
             <Route path="/create" element={<CreateMessage />} />
             <Route path="/preview" element={<PreviewMessage />} />
             <Route path="/m/:slug" element={<ViewMessage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
