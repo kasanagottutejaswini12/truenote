@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { BouquetData, FlowerItem } from '@/context/BouquetContext';
+import { BouquetData, FlowerItem, ArrangementStyle } from '@/context/BouquetContext';
 import FlowerSVG from '@/components/FlowerSVG';
 import Confetti from '@/components/Confetti';
 import { motion, AnimatePresence } from 'framer-motion';
