@@ -120,6 +120,7 @@ export interface MessageData {
   scheduledAt: string;
   countdownEnabled: boolean;
   enableMusic: boolean;
+  isOneTime: boolean;
 }
 
 export const defaultMessage: MessageData = {
