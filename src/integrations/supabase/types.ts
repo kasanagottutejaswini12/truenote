@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          accent_color: string | null
+          animation_effect: string | null
+          background_color: string | null
+          content: string
+          countdown_enabled: boolean | null
+          created_at: string
+          enable_music: boolean | null
+          font_style: string | null
+          id: string
+          occasion: string | null
+          password: string | null
+          recipient_name: string | null
+          reveal_style: string | null
+          scheduled_at: string | null
+          sender_name: string | null
+          slug: string
+          theme: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          animation_effect?: string | null
+          background_color?: string | null
+          content?: string
+          countdown_enabled?: boolean | null
+          created_at?: string
+          enable_music?: boolean | null
+          font_style?: string | null
+          id?: string
+          occasion?: string | null
+          password?: string | null
+          recipient_name?: string | null
+          reveal_style?: string | null
+          scheduled_at?: string | null
+          sender_name?: string | null
+          slug: string
+          theme?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          animation_effect?: string | null
+          background_color?: string | null
+          content?: string
+          countdown_enabled?: boolean | null
+          created_at?: string
+          enable_music?: boolean | null
+          font_style?: string | null
+          id?: string
+          occasion?: string | null
+          password?: string | null
+          recipient_name?: string | null
+          reveal_style?: string | null
+          scheduled_at?: string | null
+          sender_name?: string | null
+          slug?: string
+          theme?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
