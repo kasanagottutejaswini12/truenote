@@ -3,24 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import { useBouquet, FlowerType, FlowerItem, WrapStyle } from '@/context/BouquetContext';
 import FlowerSVG from '@/components/FlowerSVG';
 import BouquetPreview from '@/components/BouquetPreview';
+import ThemeToggle from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, X, Palette } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X, Palette, Music } from 'lucide-react';
 
-const flowerTypes: { type: FlowerType; label: string }[] = [
-  { type: 'rose', label: 'Rose' },
-  { type: 'tulip', label: 'Tulip' },
-  { type: 'lily', label: 'Lily' },
-  { type: 'sunflower', label: 'Sunflower' },
-  { type: 'daisy', label: 'Daisy' },
-  { type: 'peony', label: 'Peony' },
-];
-
-const flowerColors = [
-  '#d4627a', '#e8a0b4', '#f0c4d4', '#c75b7a',
-  '#f5e6d0', '#ffffff', '#ffd700', '#ff6b6b',
-  '#b088d4', '#87ceeb', '#ffb347', '#98d4a6',
+const flowerTypes: { type: FlowerType; label: string; defaultColor: string }[] = [
+  { type: 'rose', label: 'Rose', defaultColor: '#d4627a' },
+  { type: 'tulip', label: 'Tulip', defaultColor: '#f0c4d4' },
+  { type: 'lily', label: 'Lily', defaultColor: '#f5e6d0' },
+  { type: 'sunflower', label: 'Sunflower', defaultColor: '#ffd700' },
+  { type: 'daisy', label: 'Daisy', defaultColor: '#ffffff' },
+  { type: 'peony', label: 'Peony', defaultColor: '#f0a0b8' },
+  { type: 'lavender', label: 'Lavender', defaultColor: '#9b7ec8' },
 ];
 
 const wrapStyles: { id: WrapStyle; label: string; color: string }[] = [
@@ -63,9 +60,12 @@ const CreateBouquetPage: React.FC = () => {
             <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </Button>
           <h1 className="font-display text-xl font-semibold text-foreground">Design Your Bouquet</h1>
-          <Button size="sm" onClick={() => navigate('/card')} className="bg-primary text-primary-foreground rounded-full">
-            Next <ArrowRight className="w-4 h-4 ml-1" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button size="sm" onClick={() => navigate('/card')} className="bg-primary text-primary-foreground rounded-full">
+              Next <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -121,10 +121,10 @@ const CreateBouquetPage: React.FC = () => {
                 {flowerTypes.map(ft => (
                   <button
                     key={ft.type}
-                    onClick={() => addFlower(ft.type, flowerColors[Math.floor(Math.random() * 4)])}
+                    onClick={() => addFlower(ft.type, ft.defaultColor)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 text-sm font-body text-foreground transition-colors"
                   >
-                    <FlowerSVG type={ft.type} color={flowerColors[0]} size={18} />
+                    <FlowerSVG type={ft.type} color={ft.defaultColor} size={18} />
                     {ft.label}
                   </button>
                 ))}
@@ -218,6 +218,18 @@ const CreateBouquetPage: React.FC = () => {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Background music toggle */}
+            <div className="flex items-center justify-between bg-muted/50 rounded-xl p-3">
+              <div className="flex items-center gap-2">
+                <Music className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-body text-foreground">Background music on open</span>
+              </div>
+              <Switch
+                checked={bouquet.enableMusic}
+                onCheckedChange={val => setBouquet(prev => ({ ...prev, enableMusic: val }))}
+              />
             </div>
           </div>
         </div>
