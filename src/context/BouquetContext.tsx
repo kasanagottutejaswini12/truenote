@@ -4,6 +4,7 @@ export type FlowerType = 'rose' | 'tulip' | 'lily' | 'sunflower' | 'daisy' | 'pe
 export type FlowerColor = string;
 export type WrapStyle = 'kraft' | 'pastel-matte' | 'transparent-floral' | 'korean-layered' | 'satin-ribbon' | 'minimal-luxury';
 export type RibbonStyle = 'bow' | 'simple' | 'lace' | 'none';
+export type ArrangementStyle = 'round' | 'hand-tied' | 'cascade' | 'minimal' | 'korean' | 'luxury-layered' | 'wild-garden';
 
 export interface FlowerMemory {
   type: 'text' | 'photo';
@@ -29,6 +30,7 @@ export interface BouquetData {
   wrapColor: string;
   ribbonStyle: RibbonStyle;
   ribbonColor: string;
+  arrangementStyle: ArrangementStyle;
   messageCard: MessageCard;
   senderName: string;
   recipientName: string;
@@ -47,6 +49,7 @@ const defaultBouquet: BouquetData = {
   wrapColor: '#f5e6d0',
   ribbonStyle: 'bow',
   ribbonColor: '#d4829a',
+  arrangementStyle: 'round',
   messageCard: {
     message: 'You are loved 💕',
     fontStyle: 'Playfair Display',

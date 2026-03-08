@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useBouquet, FlowerType, FlowerItem, WrapStyle } from '@/context/BouquetContext';
+import { useBouquet, FlowerType, FlowerItem, WrapStyle, ArrangementStyle } from '@/context/BouquetContext';
 import FlowerSVG from '@/components/FlowerSVG';
 import BouquetPreview from '@/components/BouquetPreview';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, X, Palette, Music } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X, Palette, Music, Flower2 } from 'lucide-react';
 
 const flowerTypes: { type: FlowerType; label: string; defaultColor: string }[] = [
   { type: 'rose', label: 'Rose', defaultColor: '#d4627a' },
@@ -27,6 +27,16 @@ const wrapStyles: { id: WrapStyle; label: string; color: string }[] = [
   { id: 'korean-layered', label: 'Korean Style', color: '#f5e6d0' },
   { id: 'satin-ribbon', label: 'Satin', color: '#e0d0e8' },
   { id: 'minimal-luxury', label: 'Minimal', color: '#f0f0f0' },
+];
+
+const arrangementStyles: { id: ArrangementStyle; label: string; desc: string }[] = [
+  { id: 'round', label: 'Round', desc: 'Classic dome' },
+  { id: 'hand-tied', label: 'Hand-Tied', desc: 'Natural fan' },
+  { id: 'cascade', label: 'Cascade', desc: 'Flowing down' },
+  { id: 'minimal', label: 'Minimal', desc: 'Spacious' },
+  { id: 'korean', label: 'Korean', desc: 'Compact dome' },
+  { id: 'luxury-layered', label: 'Luxury', desc: 'Layered rings' },
+  { id: 'wild-garden', label: 'Wild Garden', desc: 'Organic scatter' },
 ];
 
 const wrapColors = ['#f5e6d0', '#e8d5c4', '#c9a87c', '#d4c4b0', '#f0d4e0', '#e0d0e8', '#e8f0e8', '#f0f0f0', '#fff5f5', '#f0f0ff'];
@@ -153,7 +163,30 @@ const CreateBouquetPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Wrap style */}
+            {/* Arrangement style */}
+            <div>
+              <p className="text-sm font-body font-semibold text-foreground mb-2 flex items-center gap-1">
+                <Flower2 className="w-4 h-4" /> Arrangement Style
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {arrangementStyles.map(as => (
+                  <button
+                    key={as.id}
+                    onClick={() => setBouquet(prev => ({ ...prev, arrangementStyle: as.id }))}
+                    className={`px-3 py-1.5 rounded-full text-xs font-body transition-all ${
+                      bouquet.arrangementStyle === as.id
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'bg-muted text-foreground hover:bg-muted/80'
+                    }`}
+                    title={as.desc}
+                  >
+                    {as.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+
             <div>
               <p className="text-sm font-body font-semibold text-foreground mb-2">Wrapping Style</p>
               <div className="flex flex-wrap gap-2">

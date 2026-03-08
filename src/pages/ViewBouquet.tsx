@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { BouquetData, FlowerItem } from '@/context/BouquetContext';
+import { BouquetData, FlowerItem, ArrangementStyle } from '@/context/BouquetContext';
 import FlowerSVG from '@/components/FlowerSVG';
 import Confetti from '@/components/Confetti';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -156,19 +156,43 @@ const ViewBouquetPage: React.FC = () => {
   const wDark = darken(wc, 25);
   const wLight = lighten(wc, 25);
 
+  const seeded = (i: number, mod: number) => ((i * 7 + 3) % mod) - mod / 2;
+
   const getFlowerPosition = (index: number, total: number) => {
     const cx = 160;
-    const baseY = 120;
-    const cols = Math.min(total, 4);
-    const row = Math.floor(index / cols);
-    const col = index % cols;
-    const itemsInRow = Math.min(cols, total - row * cols);
-    const offsetX = ((index * 7 + 3) % 11 - 5);
-    const offsetY = ((index * 13 + 5) % 9 - 4);
-    return {
-      x: cx - (itemsInRow - 1) * 22 + col * 44 + offsetX,
-      y: baseY - row * 40 + (col % 2) * 12 + offsetY,
-    };
+    const baseY = 110;
+    const arrangement = bouquet.arrangementStyle || 'round';
+    const rot = seeded(index, 13) * 1.5;
+
+    switch (arrangement) {
+      case 'round': {
+        if (total === 1) return { x: cx, y: baseY, rotation: rot };
+        const ring = index < Math.min(total, 6) ? 0 : 1;
+        const ringItems = ring === 0 ? Math.min(total, 6) : total - 6;
+        const ringIndex = ring === 0 ? index : index - 6;
+        const ringAngle = (ringIndex / ringItems) * Math.PI * 2 - Math.PI / 2;
+        const radius = 26 + ring * 24;
+        return { x: cx + Math.cos(ringAngle) * radius + seeded(index, 9), y: baseY + Math.sin(ringAngle) * radius * 0.6 + seeded(index + 3, 7), rotation: rot };
+      }
+      case 'hand-tied': {
+        const fanAngle = total > 1 ? ((index / (total - 1)) - 0.5) * 1.2 : 0;
+        return { x: cx + fanAngle * 76 + seeded(index, 11), y: baseY - Math.abs(fanAngle) * 30 + seeded(index + 2, 9), rotation: fanAngle * 15 + rot };
+      }
+      case 'cascade': {
+        const col = index % 3;
+        const row = Math.floor(index / 3);
+        return { x: cx + (col - 1) * 36 + seeded(index, 11), y: baseY + row * 32 - 20 + seeded(index + 1, 7), rotation: (col - 1) * 8 + rot };
+      }
+      case 'wild-garden':
+        return { x: cx + seeded(index * 3, 23) * 3.5, y: baseY + seeded(index * 5, 19) * 2.5, rotation: seeded(index * 11, 31) * 3 };
+      default: {
+        const cols = Math.min(total, 4);
+        const row = Math.floor(index / cols);
+        const col = index % cols;
+        const itemsInRow = Math.min(cols, total - row * cols);
+        return { x: cx - (itemsInRow - 1) * 22 + col * 44 + seeded(index, 11), y: baseY - row * 40 + (col % 2) * 12 + seeded(index + 5, 9), rotation: rot };
+      }
+    }
   };
 
   return (
@@ -327,8 +351,8 @@ const ViewBouquetPage: React.FC = () => {
             ))}
 
             {/* Open bouquet */}
-            <div className="relative w-80 h-[400px] mx-auto mb-4">
-              <svg width="320" height="400" className="absolute inset-0">
+            <div className="relative w-80 h-[480px] mx-auto mb-4">
+              <svg width="320" height="480" className="absolute inset-0">
                 <defs>
                   <linearGradient id="openWrapGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor={wLight} />
@@ -339,9 +363,23 @@ const ViewBouquetPage: React.FC = () => {
                     <feDropShadow dx="0" dy="3" stdDeviation="6" floodOpacity="0.12" />
                   </filter>
                 </defs>
+
+                {/* Stems */}
+                {bouquet.flowers.map((_, i) => {
+                  const total = bouquet.flowers.length;
+                  const spread = Math.min(total, 5) * 4;
+                  const offset = total > 1 ? ((i / (total - 1)) - 0.5) * spread : 0;
+                  return (
+                    <path key={`s-${i}`}
+                      d={`M${160 + offset} 240 Q${160 + offset * 1.5} 310 ${160 + offset * 0.3} 380`}
+                      stroke={i % 2 === 0 ? '#5a8a4a' : '#7ab368'} strokeWidth="2" fill="none" opacity="0.45" strokeLinecap="round"
+                    />
+                  );
+                })}
+
                 {/* Background layer */}
                 <motion.path
-                  d="M38 175 Q160 152 282 175 L160 388 Z"
+                  d="M38 175 Q160 152 282 175 L160 355 Z"
                   fill={wLight} opacity="0.25"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 0.25 }}
@@ -349,17 +387,39 @@ const ViewBouquetPage: React.FC = () => {
                 />
                 {/* Main wrap - animated open */}
                 <motion.path
-                  d="M45 180 Q160 158 275 180 L160 385 Z"
+                  d="M45 180 Q160 158 275 180 L160 352 Z"
                   fill="url(#openWrapGrad)"
                   filter="url(#openShadow)"
                   initial={{ d: "M58 120 Q160 95 262 120 L160 390 Z" }}
-                  animate={{ d: "M45 180 Q160 158 275 180 L160 385 Z" }}
+                  animate={{ d: "M45 180 Q160 158 275 180 L160 352 Z" }}
                   transition={{ duration: 1, ease: "easeOut" }}
                 />
+                {/* Paper edge folds */}
+                <path d="M45 180 Q63 174 75 182" fill={wLight} opacity="0.45" stroke={wDark} strokeWidth="0.4" />
+                <path d="M275 180 Q257 174 245 182" fill={wLight} opacity="0.45" stroke={wDark} strokeWidth="0.4" />
                 {/* Fold details */}
                 <path d="M58 198 Q160 184 262 198" fill="none" stroke={wDark} strokeWidth="0.6" opacity="0.12" />
-                <path d="M62 202 L148 350" stroke={wDark} strokeWidth="0.4" opacity="0.06" fill="none" />
-                <path d="M258 202 L172 350" stroke={wDark} strokeWidth="0.4" opacity="0.06" fill="none" />
+                <path d="M62 202 L148 320" stroke={wDark} strokeWidth="0.4" opacity="0.06" fill="none" />
+                <path d="M258 202 L172 320" stroke={wDark} strokeWidth="0.4" opacity="0.06" fill="none" />
+
+                {/* Handle */}
+                <path d="M132 345 Q129 395 134 440 L186 440 Q191 395 188 345 Z" fill={wc} opacity="0.85" />
+                <path d="M136 350 L138 435" stroke={wDark} strokeWidth="0.5" opacity="0.12" fill="none" />
+                <path d="M184 350 L182 435" stroke={wDark} strokeWidth="0.5" opacity="0.12" fill="none" />
+                {/* Ribbon on handle */}
+                {bouquet.ribbonStyle !== 'none' && (
+                  <>
+                    <rect x="128" y="362" width="64" height="8" rx="4" fill={bouquet.ribbonColor} opacity="0.7" />
+                    <rect x="128" y="363" width="64" height="2" fill={lighten(bouquet.ribbonColor, 30)} opacity="0.3" />
+                    {bouquet.ribbonStyle === 'bow' && (
+                      <>
+                        <ellipse cx="150" cy="360" rx="12" ry="7" fill={bouquet.ribbonColor} opacity="0.6" transform="rotate(-15 150 360)" />
+                        <ellipse cx="170" cy="360" rx="12" ry="7" fill={bouquet.ribbonColor} opacity="0.6" transform="rotate(15 170 360)" />
+                        <circle cx="160" cy="361" r="4" fill={darken(bouquet.ribbonColor, 20)} opacity="0.75" />
+                      </>
+                    )}
+                  </>
+                )}
               </svg>
 
               {/* Flowers */}
@@ -370,7 +430,12 @@ const ViewBouquetPage: React.FC = () => {
                   <motion.div
                     key={flower.id}
                     className="absolute cursor-pointer"
-                    style={{ left: pos.x - flowerSize / 2, top: pos.y - flowerSize * 0.6, zIndex: 10 + i }}
+                    style={{
+                      left: pos.x - flowerSize / 2,
+                      top: pos.y - flowerSize * 0.6,
+                      zIndex: 10 + i,
+                      transform: `rotate(${pos.rotation || 0}deg)`,
+                    }}
                     initial={{ scale: 0, opacity: 0, y: 40 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + i * 0.1, duration: 0.7, type: 'spring', bounce: 0.4 }}
@@ -391,7 +456,7 @@ const ViewBouquetPage: React.FC = () => {
                 );
               })}
 
-              {/* Ribbon */}
+              {/* Ribbon on wrap */}
               {bouquet.ribbonStyle !== 'none' && (
                 <motion.div
                   className="absolute"
