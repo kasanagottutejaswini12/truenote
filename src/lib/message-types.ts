@@ -120,6 +120,7 @@ export interface MessageData {
   scheduledAt: string;
   countdownEnabled: boolean;
   enableMusic: boolean;
+  isOneTime: boolean;
 }
 
 export const defaultMessage: MessageData = {
@@ -138,6 +139,7 @@ export const defaultMessage: MessageData = {
   scheduledAt: '',
   countdownEnabled: false,
   enableMusic: false,
+  isOneTime: false,
 };
 
 export const generateSlug = () => {

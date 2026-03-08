@@ -1,1 +1,4 @@
 project_id = "zafdzsmhtljqmetmipos"
+
+[functions.generate-message]
+verify_jwt = false

@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      message_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          message_id: string
+          reaction: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_id: string
+          reaction: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_id?: string
+          reaction?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           accent_color: string | null
@@ -25,7 +54,10 @@ export type Database = {
           enable_music: boolean | null
           font_style: string | null
           id: string
+          is_expired: boolean | null
+          is_one_time: boolean | null
           occasion: string | null
+          opened_at: string | null
           password: string | null
           recipient_name: string | null
           reveal_style: string | null
@@ -46,7 +78,10 @@ export type Database = {
           enable_music?: boolean | null
           font_style?: string | null
           id?: string
+          is_expired?: boolean | null
+          is_one_time?: boolean | null
           occasion?: string | null
+          opened_at?: string | null
           password?: string | null
           recipient_name?: string | null
           reveal_style?: string | null
@@ -67,7 +102,10 @@ export type Database = {
           enable_music?: boolean | null
           font_style?: string | null
           id?: string
+          is_expired?: boolean | null
+          is_one_time?: boolean | null
           occasion?: string | null
+          opened_at?: string | null
           password?: string | null
           recipient_name?: string | null
           reveal_style?: string | null

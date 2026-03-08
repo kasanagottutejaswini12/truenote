@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { motion } from 'framer-motion';
-import { MessageSquare, Sparkles, Lock, Clock, Send, Download } from 'lucide-react';
+import { MessageSquare, Sparkles, Lock, Clock, Send, Download, LayoutDashboard } from 'lucide-react';
 
 const features = [
   { icon: MessageSquare, title: 'Beautiful Messages', desc: 'Create personalized messages with themes and animations' },
@@ -40,14 +40,25 @@ const IndexPage: React.FC = () => {
             <p className="text-lg text-muted-foreground font-body max-w-md mx-auto mb-8">
               Create interactive, animated messages that surprise and delight. Add countdowns, passwords, and beautiful reveal animations.
             </p>
-            <Button
-              size="lg"
-              className="bg-primary text-primary-foreground rounded-full px-10 py-6 text-lg font-body shadow-lg shadow-primary/20"
-              onClick={() => navigate('/create')}
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Create a Message
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground rounded-full px-10 py-6 text-lg font-body shadow-lg shadow-primary/20"
+                onClick={() => navigate('/create')}
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                Create a Message
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-full px-8 py-6 text-lg font-body"
+                onClick={() => navigate('/dashboard')}
+              >
+                <LayoutDashboard className="w-5 h-5 mr-2" />
+                My Messages
+              </Button>
+            </div>
           </motion.div>
         </div>
 
