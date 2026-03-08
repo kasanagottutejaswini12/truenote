@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { themes, type ThemeId, type RevealStyle, type AnimationEffect } from '@/lib/message-types';
 import AnimationEffects from '@/components/AnimationEffects';
+import MessageReactions from '@/components/MessageReactions';
 import TapReveal from '@/components/reveals/TapReveal';
 import TypingReveal from '@/components/reveals/TypingReveal';
 import EnvelopeReveal from '@/components/reveals/EnvelopeReveal';
@@ -31,6 +32,9 @@ interface MessageRow {
   scheduled_at: string | null;
   countdown_enabled: boolean | null;
   enable_music: boolean | null;
+  is_one_time: boolean | null;
+  is_expired: boolean | null;
+  opened_at: string | null;
 }
 
 const createAmbientMusic = () => {
@@ -66,7 +70,7 @@ const ViewMessagePage: React.FC = () => {
   const navigate = useNavigate();
   const [msg, setMsg] = useState<MessageRow | null>(null);
   const [loading, setLoading] = useState(true);
-  const [step, setStep] = useState<'welcome' | 'password' | 'countdown' | 'reveal' | 'done'>('welcome');
+  const [step, setStep] = useState<'welcome' | 'password' | 'countdown' | 'reveal' | 'done' | 'expired'>('welcome');
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [showEffects, setShowEffects] = useState(false);
@@ -80,7 +84,17 @@ const ViewMessagePage: React.FC = () => {
       if (!slug) return;
       const { data, error } = await supabase.from('messages').select('*').eq('slug', slug).single();
       if (error || !data) { setLoading(false); return; }
-      setMsg(data as MessageRow);
+      const row = data as MessageRow;
+      
+      // Check if one-time message is expired
+      if (row.is_one_time && row.is_expired) {
+        setMsg(row);
+        setStep('expired');
+        setLoading(false);
+        return;
+      }
+      
+      setMsg(row);
       setLoading(false);
     };
     load();
@@ -130,14 +144,23 @@ const ViewMessagePage: React.FC = () => {
     }
   };
 
-  const handleRevealed = useCallback(() => {
+  const handleRevealed = useCallback(async () => {
     setShowEffects(true);
     setStep('done');
     if (msg?.enable_music) {
       const music = createAmbientMusic();
       if (music) { musicRef.current = music; setMusicPlaying(true); }
     }
-  }, [msg?.enable_music]);
+    // Mark as opened and handle one-time expiry
+    if (msg?.id) {
+      const updates: any = {};
+      if (!msg.opened_at) updates.opened_at = new Date().toISOString();
+      if (msg.is_one_time) updates.is_expired = true;
+      if (Object.keys(updates).length > 0) {
+        await supabase.from('messages').update(updates).eq('id', msg.id);
+      }
+    }
+  }, [msg]);
 
   const toggleMusic = () => {
     if (musicPlaying) { musicRef.current?.stop(); musicRef.current = null; setMusicPlaying(false); }
@@ -154,7 +177,6 @@ const ViewMessagePage: React.FC = () => {
       link.href = canvas.toDataURL('image/png');
       link.click();
     } catch {
-      // Fallback: create a simple canvas
       const c = document.createElement('canvas');
       c.width = 600; c.height = 400;
       const ctx = c.getContext('2d');
@@ -201,6 +223,21 @@ const ViewMessagePage: React.FC = () => {
     );
   }
 
+  if (step === 'expired') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="text-center font-body max-w-sm">
+          <p className="text-5xl mb-4">🔥</p>
+          <h2 className="text-2xl font-display font-bold text-foreground mb-2">Secret Message</h2>
+          <p className="text-muted-foreground mb-6">This message was a one-time secret and has already been viewed.</p>
+          <Button onClick={() => navigate('/')} className="bg-primary text-primary-foreground rounded-full">
+            Create a message for someone
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const theme = themes[(msg.theme as ThemeId) || 'pastel'] || themes.pastel;
   const revealStyle = (msg.reveal_style as RevealStyle) || 'tap';
   const animEffect = (msg.animation_effect as AnimationEffect) || 'none';
@@ -225,10 +262,8 @@ const ViewMessagePage: React.FC = () => {
   );
 
   const fullCard = (
-    <div
-      className="w-72 rounded-2xl shadow-2xl border-2 overflow-hidden relative"
-      style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}
-    >
+    <div className="w-72 rounded-2xl shadow-2xl border-2 overflow-hidden relative"
+      style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}>
       {messageContent}
     </div>
   );
@@ -237,15 +272,9 @@ const ViewMessagePage: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden" style={{ backgroundColor: theme.bg }}>
       <AnimationEffects effect={animEffect} show={showEffects} />
 
-      {/* Music control */}
       {step === 'done' && msg.enable_music && (
-        <motion.button
-          className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-card shadow-lg border border-border flex items-center justify-center"
-          onClick={toggleMusic}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1 }}
-        >
+        <motion.button className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-card shadow-lg border border-border flex items-center justify-center"
+          onClick={toggleMusic} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1 }}>
           {musicPlaying ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
         </motion.button>
       )}
@@ -264,12 +293,8 @@ const ViewMessagePage: React.FC = () => {
                 For you, <span className="font-semibold" style={{ color: theme.accentColor }}>{msg.recipient_name}</span> 💕
               </p>
             )}
-            <Button
-              size="lg"
-              className="rounded-full px-10 py-6 text-lg font-body shadow-lg"
-              style={{ backgroundColor: theme.accentColor, color: '#fff' }}
-              onClick={handleContinue}
-            >
+            <Button size="lg" className="rounded-full px-10 py-6 text-lg font-body shadow-lg"
+              style={{ backgroundColor: theme.accentColor, color: '#fff' }} onClick={handleContinue}>
               Open Message
             </Button>
           </motion.div>
@@ -280,19 +305,11 @@ const ViewMessagePage: React.FC = () => {
             <div className="text-5xl mb-4">🔒</div>
             <h2 className="text-2xl font-display font-bold mb-2" style={{ color: theme.textColor }}>Protected Message</h2>
             <p className="text-sm font-body mb-4" style={{ color: theme.textColor, opacity: 0.6 }}>Enter the secret code to unlock</p>
-            <Input
-              type="text"
-              placeholder="Enter code..."
-              value={passwordInput}
+            <Input type="text" placeholder="Enter code..." value={passwordInput}
               onChange={e => { setPasswordInput(e.target.value); setPasswordError(false); }}
-              className={`mb-3 text-center font-body ${passwordError ? 'border-destructive' : ''}`}
-            />
+              className={`mb-3 text-center font-body ${passwordError ? 'border-destructive' : ''}`} />
             {passwordError && <p className="text-destructive text-xs font-body mb-3">Wrong code, try again</p>}
-            <Button
-              className="w-full rounded-full font-body"
-              style={{ backgroundColor: theme.accentColor, color: '#fff' }}
-              onClick={handlePasswordSubmit}
-            >
+            <Button className="w-full rounded-full font-body" style={{ backgroundColor: theme.accentColor, color: '#fff' }} onClick={handlePasswordSubmit}>
               Unlock
             </Button>
           </motion.div>
@@ -310,18 +327,10 @@ const ViewMessagePage: React.FC = () => {
 
         {(step === 'reveal' || step === 'done') && (
           <motion.div key="reveal" className="z-10 flex flex-col items-center w-full max-w-md" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {revealStyle === 'tap' && (
-              <TapReveal theme={theme} onReveal={handleRevealed}>{fullCard}</TapReveal>
-            )}
-            {revealStyle === 'envelope' && (
-              <EnvelopeReveal theme={theme} onReveal={handleRevealed}>{fullCard}</EnvelopeReveal>
-            )}
-            {revealStyle === 'card-flip' && (
-              <CardFlipReveal theme={theme} onReveal={handleRevealed}>{messageContent}</CardFlipReveal>
-            )}
-            {revealStyle === 'scratch' && (
-              <ScratchReveal theme={theme} onReveal={handleRevealed}>{messageContent}</ScratchReveal>
-            )}
+            {revealStyle === 'tap' && <TapReveal theme={theme} onReveal={handleRevealed}>{fullCard}</TapReveal>}
+            {revealStyle === 'envelope' && <EnvelopeReveal theme={theme} onReveal={handleRevealed}>{fullCard}</EnvelopeReveal>}
+            {revealStyle === 'card-flip' && <CardFlipReveal theme={theme} onReveal={handleRevealed}>{messageContent}</CardFlipReveal>}
+            {revealStyle === 'scratch' && <ScratchReveal theme={theme} onReveal={handleRevealed}>{messageContent}</ScratchReveal>}
             {revealStyle === 'typing' && step === 'reveal' && (
               <div className="w-72 rounded-2xl shadow-2xl border-2 overflow-hidden" style={{ backgroundColor: theme.cardBg, borderColor: theme.cardBorder }}>
                 {messageContent}
@@ -329,20 +338,19 @@ const ViewMessagePage: React.FC = () => {
             )}
             {revealStyle === 'typing' && step === 'done' && fullCard}
 
-            {/* Download & CTA */}
             {step === 'done' && (
-              <motion.div className="mt-8 flex flex-col items-center gap-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 }}>
-                <Button variant="outline" size="sm" className="rounded-full font-body" onClick={downloadCard}>
-                  <Download className="w-4 h-4 mr-1" /> Download Card
-                </Button>
-                <Button
-                  size="lg"
-                  className="rounded-full px-8 font-body shadow-lg"
-                  style={{ backgroundColor: theme.accentColor, color: '#fff' }}
-                  onClick={() => navigate('/')}
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Create a message for someone
+              <motion.div className="mt-8 flex flex-col items-center gap-4 w-full max-w-xs" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}>
+                {/* Reactions */}
+                <MessageReactions messageId={msg.id} accentColor={theme.accentColor} />
+                
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="rounded-full font-body" onClick={downloadCard}>
+                    <Download className="w-4 h-4 mr-1" /> Download
+                  </Button>
+                </div>
+                <Button size="lg" className="rounded-full px-8 font-body shadow-lg"
+                  style={{ backgroundColor: theme.accentColor, color: '#fff' }} onClick={() => navigate('/')}>
+                  <Heart className="w-4 h-4 mr-2" /> Create a message for someone
                 </Button>
               </motion.div>
             )}
