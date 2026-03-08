@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type FlowerType = 'rose' | 'tulip' | 'lily' | 'sunflower' | 'daisy' | 'peony';
+export type FlowerType = 'rose' | 'tulip' | 'lily' | 'sunflower' | 'daisy' | 'peony' | 'lavender';
 export type FlowerColor = string;
 export type WrapStyle = 'kraft' | 'pastel-matte' | 'transparent-floral' | 'korean-layered' | 'satin-ribbon' | 'minimal-luxury';
 export type RibbonStyle = 'bow' | 'simple' | 'lace' | 'none';
@@ -32,6 +32,7 @@ export interface BouquetData {
   messageCard: MessageCard;
   senderName: string;
   recipientName: string;
+  enableMusic: boolean;
 }
 
 const defaultBouquet: BouquetData = {
@@ -39,7 +40,7 @@ const defaultBouquet: BouquetData = {
     { id: '1', type: 'rose', color: '#d4627a' },
     { id: '2', type: 'peony', color: '#f0a0b8' },
     { id: '3', type: 'rose', color: '#c75b7a' },
-    { id: '4', type: 'lily', color: '#f5e6d0' },
+    { id: '4', type: 'lavender', color: '#9b7ec8' },
     { id: '5', type: 'daisy', color: '#ffffff' },
   ],
   wrapStyle: 'korean-layered',
@@ -53,6 +54,7 @@ const defaultBouquet: BouquetData = {
   },
   senderName: '',
   recipientName: '',
+  enableMusic: false,
 };
 
 interface BouquetContextType {
