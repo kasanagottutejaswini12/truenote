@@ -30,6 +30,7 @@ export interface BouquetData {
   wrapColor: string;
   ribbonStyle: RibbonStyle;
   ribbonColor: string;
+  arrangementStyle: ArrangementStyle;
   messageCard: MessageCard;
   senderName: string;
   recipientName: string;
