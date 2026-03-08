@@ -15,8 +15,6 @@ const colors = {
 };
 
 const AnimationEffects: React.FC<AnimationEffectsProps> = ({ effect, show }) => {
-  if (!show || effect === 'none') return null;
-
   const particles = useMemo(() =>
     [...Array(30)].map((_, i) => ({
       id: i,
