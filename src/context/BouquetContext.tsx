@@ -4,6 +4,7 @@ export type FlowerType = 'rose' | 'tulip' | 'lily' | 'sunflower' | 'daisy' | 'pe
 export type FlowerColor = string;
 export type WrapStyle = 'kraft' | 'pastel-matte' | 'transparent-floral' | 'korean-layered' | 'satin-ribbon' | 'minimal-luxury';
 export type RibbonStyle = 'bow' | 'simple' | 'lace' | 'none';
+export type ArrangementStyle = 'round' | 'hand-tied' | 'cascade' | 'minimal' | 'korean' | 'luxury-layered' | 'wild-garden';
 
 export interface FlowerMemory {
   type: 'text' | 'photo';
