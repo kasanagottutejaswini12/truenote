@@ -1,34 +1,66 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Flower2, Send } from 'lucide-react';
+import { Heart, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import FlowerSVG from '@/components/FlowerSVG';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
+  const floatingFlowers = [
+    { type: 'rose' as const, color: '#e8a0b4', x: 12, delay: 0 },
+    { type: 'tulip' as const, color: '#f0c4d4', x: 75, delay: 1.5 },
+    { type: 'daisy' as const, color: '#ffffff', x: 88, delay: 3 },
+    { type: 'peony' as const, color: '#d4829a', x: 25, delay: 4 },
+    { type: 'lily' as const, color: '#f5e6d0', x: 60, delay: 2.5 },
+  ];
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 overflow-hidden relative">
-      {/* Floating petals background */}
-      {[...Array(8)].map((_, i) => (
+      {/* Floating flowers background */}
+      {floatingFlowers.map((f, i) => (
         <motion.div
           key={i}
-          className="absolute rounded-full bg-primary/10"
+          className="absolute pointer-events-none"
+          style={{ left: `${f.x}%`, top: `-8%` }}
+          animate={{
+            y: ['0vh', '115vh'],
+            rotate: [0, 180],
+            x: [(Math.random() - 0.5) * 60],
+          }}
+          transition={{
+            duration: 10 + Math.random() * 5,
+            repeat: Infinity,
+            delay: f.delay,
+            ease: 'linear',
+          }}
+        >
+          <FlowerSVG type={f.type} color={f.color} size={28} />
+        </motion.div>
+      ))}
+
+      {/* Soft petal particles */}
+      {[...Array(10)].map((_, i) => (
+        <motion.div
+          key={`p-${i}`}
+          className="absolute rounded-full bg-primary/8"
           style={{
-            width: 10 + Math.random() * 20,
-            height: 10 + Math.random() * 20,
+            width: 8 + Math.random() * 16,
+            height: 8 + Math.random() * 16,
             left: `${Math.random() * 100}%`,
             top: `-5%`,
+            borderRadius: '50% 0 50% 50%',
           }}
           animate={{
             y: ['0vh', '110vh'],
-            x: [0, (Math.random() - 0.5) * 100],
+            x: [0, (Math.random() - 0.5) * 80],
             rotate: [0, 360],
           }}
           transition={{
-            duration: 6 + Math.random() * 4,
+            duration: 7 + Math.random() * 5,
             repeat: Infinity,
-            delay: i * 0.8,
+            delay: i * 0.7,
             ease: 'linear',
           }}
         />
@@ -40,12 +72,16 @@ const HomePage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
+        {/* Hero flower arrangement */}
         <motion.div
-          className="mb-6"
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 3, repeat: Infinity }}
+          className="mb-8 flex items-end justify-center gap-1"
+          animate={{ y: [0, -5, 0] }}
+          transition={{ duration: 4, repeat: Infinity }}
         >
-          <Flower2 className="w-16 h-16 text-primary mx-auto" strokeWidth={1.5} />
+          <FlowerSVG type="tulip" color="#f0c4d4" size={32} />
+          <FlowerSVG type="rose" color="#d4627a" size={44} />
+          <FlowerSVG type="peony" color="#e8a0b4" size={38} />
+          <FlowerSVG type="daisy" color="#ffffff" size={30} />
         </motion.div>
 
         <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4 leading-tight">
