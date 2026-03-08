@@ -99,36 +99,6 @@ const IndexPage: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Features */}
-        <div className="max-w-5xl mx-auto px-6 pb-24">
-          <motion.div 
-            className="text-center mb-12"
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ delay: 0.4 }}
-          >
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">Everything you need</h2>
-            <p className="text-muted-foreground font-body">Powerful features to make every message special</p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                className="bg-card rounded-2xl p-6 border border-border/50 shadow-soft card-hover group"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + i * 0.08 }}
-              >
-                <div className="w-10 h-10 rounded-xl gradient-subtle flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <f.icon className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="font-body font-semibold text-foreground mb-1.5 text-base">{f.title}</h3>
-                <p className="text-sm text-muted-foreground font-body leading-relaxed">{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
