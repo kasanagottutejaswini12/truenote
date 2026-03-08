@@ -156,19 +156,43 @@ const ViewBouquetPage: React.FC = () => {
   const wDark = darken(wc, 25);
   const wLight = lighten(wc, 25);
 
+  const seeded = (i: number, mod: number) => ((i * 7 + 3) % mod) - mod / 2;
+
   const getFlowerPosition = (index: number, total: number) => {
     const cx = 160;
-    const baseY = 120;
-    const cols = Math.min(total, 4);
-    const row = Math.floor(index / cols);
-    const col = index % cols;
-    const itemsInRow = Math.min(cols, total - row * cols);
-    const offsetX = ((index * 7 + 3) % 11 - 5);
-    const offsetY = ((index * 13 + 5) % 9 - 4);
-    return {
-      x: cx - (itemsInRow - 1) * 22 + col * 44 + offsetX,
-      y: baseY - row * 40 + (col % 2) * 12 + offsetY,
-    };
+    const baseY = 110;
+    const arrangement = bouquet.arrangementStyle || 'round';
+    const rot = seeded(index, 13) * 1.5;
+
+    switch (arrangement) {
+      case 'round': {
+        if (total === 1) return { x: cx, y: baseY, rotation: rot };
+        const ring = index < Math.min(total, 6) ? 0 : 1;
+        const ringItems = ring === 0 ? Math.min(total, 6) : total - 6;
+        const ringIndex = ring === 0 ? index : index - 6;
+        const ringAngle = (ringIndex / ringItems) * Math.PI * 2 - Math.PI / 2;
+        const radius = 26 + ring * 24;
+        return { x: cx + Math.cos(ringAngle) * radius + seeded(index, 9), y: baseY + Math.sin(ringAngle) * radius * 0.6 + seeded(index + 3, 7), rotation: rot };
+      }
+      case 'hand-tied': {
+        const fanAngle = total > 1 ? ((index / (total - 1)) - 0.5) * 1.2 : 0;
+        return { x: cx + fanAngle * 76 + seeded(index, 11), y: baseY - Math.abs(fanAngle) * 30 + seeded(index + 2, 9), rotation: fanAngle * 15 + rot };
+      }
+      case 'cascade': {
+        const col = index % 3;
+        const row = Math.floor(index / 3);
+        return { x: cx + (col - 1) * 36 + seeded(index, 11), y: baseY + row * 32 - 20 + seeded(index + 1, 7), rotation: (col - 1) * 8 + rot };
+      }
+      case 'wild-garden':
+        return { x: cx + seeded(index * 3, 23) * 3.5, y: baseY + seeded(index * 5, 19) * 2.5, rotation: seeded(index * 11, 31) * 3 };
+      default: {
+        const cols = Math.min(total, 4);
+        const row = Math.floor(index / cols);
+        const col = index % cols;
+        const itemsInRow = Math.min(cols, total - row * cols);
+        return { x: cx - (itemsInRow - 1) * 22 + col * 44 + seeded(index, 11), y: baseY - row * 40 + (col % 2) * 12 + seeded(index + 5, 9), rotation: rot };
+      }
+    }
   };
 
   return (
