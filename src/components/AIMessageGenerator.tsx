@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Sparkles, RefreshCw, ArrowRight } from 'lucide-react';
+import { Sparkles, RefreshCw, ArrowRight, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   occasion: string;
@@ -26,10 +27,7 @@ const AIMessageGenerator: React.FC<Props> = ({ occasion, onSelect }) => {
         body: { occasion, relationship, tone },
       });
       if (error) throw error;
-      if (data?.error) {
-        toast.error(data.error);
-        return;
-      }
+      if (data?.error) { toast.error(data.error); return; }
       setSuggestions(data.suggestions || []);
     } catch (err) {
       console.error(err);
@@ -41,32 +39,38 @@ const AIMessageGenerator: React.FC<Props> = ({ occasion, onSelect }) => {
 
   if (!open) {
     return (
-      <Button variant="outline" size="sm" className="rounded-full font-body text-xs gap-1" onClick={() => setOpen(true)}>
-        <Sparkles className="w-3 h-3" /> AI Help
+      <Button variant="outline" size="sm" className="rounded-full font-body text-xs gap-1.5 border-border/60 hover:border-primary/30 hover:bg-secondary/50 transition-all" onClick={() => setOpen(true)}>
+        <Sparkles className="w-3.5 h-3.5 text-primary" /> AI Help
       </Button>
     );
   }
 
   return (
-    <div className="bg-muted/50 rounded-xl p-4 space-y-3">
+    <motion.div 
+      className="bg-card rounded-2xl p-5 border border-border/50 shadow-soft space-y-4"
+      initial={{ opacity: 0, y: -10 }} 
+      animate={{ opacity: 1, y: 0 }}
+    >
       <div className="flex items-center justify-between">
-        <p className="text-sm font-body font-semibold text-foreground flex items-center gap-1">
-          <Sparkles className="w-4 h-4 text-primary" /> AI Message Helper
-        </p>
-        <Button variant="ghost" size="sm" className="text-xs" onClick={() => setOpen(false)}>Close</Button>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg gradient-primary flex items-center justify-center">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-sm font-body font-semibold text-foreground">AI Message Helper</span>
+        </div>
+        <Button variant="ghost" size="sm" className="rounded-full h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
+          <X className="w-3.5 h-3.5" />
+        </Button>
       </div>
 
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-1">Relationship</p>
-        <div className="flex flex-wrap gap-1">
+        <p className="text-xs font-body text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">Relationship</p>
+        <div className="flex flex-wrap gap-1.5">
           {relationships.map(r => (
-            <button
-              key={r}
-              onClick={() => setRelationship(r)}
-              className={`px-2 py-1 rounded-full text-xs font-body transition-all ${
-                relationship === r ? 'bg-primary text-primary-foreground' : 'bg-background text-foreground hover:bg-muted'
-              }`}
-            >
+            <button key={r} onClick={() => setRelationship(r)}
+              className={`px-3 py-1.5 rounded-full text-xs font-body font-medium transition-all duration-200 capitalize ${
+                relationship === r ? 'gradient-primary text-white shadow-sm' : 'bg-secondary/60 text-foreground hover:bg-secondary'
+              }`}>
               {r}
             </button>
           ))}
@@ -74,40 +78,46 @@ const AIMessageGenerator: React.FC<Props> = ({ occasion, onSelect }) => {
       </div>
 
       <div>
-        <p className="text-xs font-body text-muted-foreground mb-1">Tone</p>
-        <div className="flex flex-wrap gap-1">
+        <p className="text-xs font-body text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">Tone</p>
+        <div className="flex flex-wrap gap-1.5">
           {tones.map(t => (
-            <button
-              key={t}
-              onClick={() => setTone(t)}
-              className={`px-2 py-1 rounded-full text-xs font-body transition-all ${
-                tone === t ? 'bg-primary text-primary-foreground' : 'bg-background text-foreground hover:bg-muted'
-              }`}
-            >
+            <button key={t} onClick={() => setTone(t)}
+              className={`px-3 py-1.5 rounded-full text-xs font-body font-medium transition-all duration-200 capitalize ${
+                tone === t ? 'gradient-primary text-white shadow-sm' : 'bg-secondary/60 text-foreground hover:bg-secondary'
+              }`}>
               {t}
             </button>
           ))}
         </div>
       </div>
 
-      <Button size="sm" className="rounded-full font-body text-xs" onClick={generate} disabled={loading}>
-        {loading ? <RefreshCw className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+      <Button size="sm" className="rounded-full font-body text-xs gradient-primary text-white border-0 shadow-sm hover:shadow-glow transition-all" onClick={generate} disabled={loading}>
+        {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
         {loading ? 'Generating...' : 'Generate Suggestions'}
       </Button>
 
-      {suggestions.length > 0 && (
-        <div className="space-y-2">
-          {suggestions.map((s, i) => (
-            <div key={i} className="bg-card rounded-lg p-3 border border-border/50 flex items-start gap-2">
-              <p className="text-sm font-body text-foreground flex-1">{s}</p>
-              <Button variant="ghost" size="sm" className="shrink-0" onClick={() => { onSelect(s); setOpen(false); }}>
-                <ArrowRight className="w-3 h-3" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+      <AnimatePresence>
+        {suggestions.length > 0 && (
+          <motion.div className="space-y-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            {suggestions.map((s, i) => (
+              <motion.div 
+                key={i} 
+                className="bg-muted/30 rounded-xl p-3.5 border border-border/30 flex items-start gap-2 card-hover cursor-pointer group"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                onClick={() => { onSelect(s); setOpen(false); }}
+              >
+                <p className="text-sm font-body text-foreground flex-1 leading-relaxed">{s}</p>
+                <div className="shrink-0 w-7 h-7 rounded-lg bg-secondary/60 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

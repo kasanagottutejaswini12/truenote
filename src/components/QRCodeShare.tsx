@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
-import { Download, QrCode } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 interface Props {
   url: string;
@@ -35,11 +35,11 @@ const QRCodeShare: React.FC<Props> = ({ url }) => {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div ref={qrRef} className="bg-card p-4 rounded-xl border border-border">
+      <div ref={qrRef} className="bg-card p-5 rounded-2xl border border-border/50 shadow-soft">
         <QRCodeSVG value={url} size={160} bgColor="transparent" fgColor="currentColor" />
       </div>
-      <Button variant="outline" size="sm" className="rounded-full font-body text-xs gap-1" onClick={downloadQR}>
-        <Download className="w-3 h-3" /> Download QR
+      <Button variant="outline" size="sm" className="rounded-full font-body text-xs gap-1.5" onClick={downloadQR}>
+        <Download className="w-3.5 h-3.5" /> Download QR
       </Button>
     </div>
   );
