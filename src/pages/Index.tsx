@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { motion } from 'framer-motion';
-import { MessageSquare, Sparkles, Lock, Clock, Send, Download } from 'lucide-react';
+import { MessageSquare, Sparkles, Lock, Clock, Send, Download, LayoutDashboard } from 'lucide-react';
 
 const features = [
   { icon: MessageSquare, title: 'Beautiful Messages', desc: 'Create personalized messages with themes and animations' },
