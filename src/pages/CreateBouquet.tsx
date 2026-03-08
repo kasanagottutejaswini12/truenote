@@ -29,6 +29,16 @@ const wrapStyles: { id: WrapStyle; label: string; color: string }[] = [
   { id: 'minimal-luxury', label: 'Minimal', color: '#f0f0f0' },
 ];
 
+const arrangementStyles: { id: ArrangementStyle; label: string; desc: string }[] = [
+  { id: 'round', label: 'Round', desc: 'Classic dome' },
+  { id: 'hand-tied', label: 'Hand-Tied', desc: 'Natural fan' },
+  { id: 'cascade', label: 'Cascade', desc: 'Flowing down' },
+  { id: 'minimal', label: 'Minimal', desc: 'Spacious' },
+  { id: 'korean', label: 'Korean', desc: 'Compact dome' },
+  { id: 'luxury-layered', label: 'Luxury', desc: 'Layered rings' },
+  { id: 'wild-garden', label: 'Wild Garden', desc: 'Organic scatter' },
+];
+
 const wrapColors = ['#f5e6d0', '#e8d5c4', '#c9a87c', '#d4c4b0', '#f0d4e0', '#e0d0e8', '#e8f0e8', '#f0f0f0', '#fff5f5', '#f0f0ff'];
 const ribbonColors = ['#d4829a', '#e8a0b4', '#c75b7a', '#b088d4', '#ffd700', '#87ceeb', '#ff6b6b', '#98d4a6', '#f5e6d0', '#8b6914'];
 
