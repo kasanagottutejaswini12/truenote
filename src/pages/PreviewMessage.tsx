@@ -165,15 +165,6 @@ const PreviewMessagePage: React.FC = () => {
             </div>
             {showQR && <div className="flex justify-center"><QRCodeShare url={shareUrl} /></div>}
 
-            {/* Share buttons */}
-            <div className="flex gap-2">
-              <Button className="flex-1 rounded-full font-body font-medium" variant="outline" onClick={shareWhatsApp}>WhatsApp</Button>
-              {typeof navigator.share !== 'undefined' && (
-                <Button className="flex-1 rounded-full font-body font-medium" variant="outline" onClick={shareNative}>
-                  <Share2 className="w-4 h-4 mr-1.5" /> Share
-                </Button>
-              )}
-            </div>
 
             <div className="flex gap-2">
               <Button variant="ghost" className="flex-1 font-body text-muted-foreground hover:text-foreground rounded-full" onClick={() => window.open(shareUrl, '_blank')}>
