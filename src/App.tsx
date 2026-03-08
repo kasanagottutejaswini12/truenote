@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import CreateMessage from "./pages/CreateMessage";
 import PreviewMessage from "./pages/PreviewMessage";
 import ViewMessage from "./pages/ViewMessage";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
