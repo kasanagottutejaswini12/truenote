@@ -26,6 +26,8 @@ const AnimationEffects: React.FC<AnimationEffectsProps> = ({ effect, show }) => 
       rotation: Math.random() * 720,
     })), [effect]);
 
+  if (!show || effect === 'none') return null;
+
   return (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
       {particles.map(p => (
