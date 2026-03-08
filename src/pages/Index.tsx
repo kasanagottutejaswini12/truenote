@@ -3,16 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { motion } from 'framer-motion';
-import { MessageSquare, Sparkles, Lock, Clock, Send, Download, LayoutDashboard, Zap, Shield, QrCode } from 'lucide-react';
-
-const features = [
-  { icon: Sparkles, title: 'Reveal Animations', desc: 'Envelope, typing, scratch, card flip — surprise and delight.' },
-  { icon: Lock, title: 'Password Protected', desc: 'Keep messages private with secret codes.' },
-  { icon: Clock, title: 'Scheduled Unlock', desc: 'Set messages to reveal at the perfect moment.' },
-  { icon: Zap, title: 'AI Message Writer', desc: 'Generate heartfelt messages with AI assistance.' },
-  { icon: QrCode, title: 'QR Code Sharing', desc: 'Share messages instantly with scannable QR codes.' },
-  { icon: Shield, title: 'One-Time Secrets', desc: 'Messages that disappear after being read once.' },
-];
+import { MessageSquare, Sparkles, LayoutDashboard } from 'lucide-react';
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate();
